@@ -1,0 +1,39 @@
+= Greeting REST Service API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+= Greeting Endpoint
+
+Thie endpoint allows for retrieveing either a hello or goodbye meessage to the user.
+
+[[resources-get-greeting]]
+
+== Hello
+
+This request will return a welcome greeting to the user.
+
+=== Example request
+
+include::{snippets}/hello/http-request.adoc[]
+
+=== Example response
+
+include::{snippets}/hello/http-response.adoc[]
+
+[[resources-get-goodbye]]
+
+== Goodbye
+
+This request will return a goodbye message.
+
+=== Example request
+
+include::{snippets}/goodbye/http-request.adoc[]
+
+=== Example response
+
+include::{snippets}/goodbye/http-response.adoc[]
