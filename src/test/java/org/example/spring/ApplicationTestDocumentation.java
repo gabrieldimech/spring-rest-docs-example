@@ -17,14 +17,13 @@
 package org.example.spring;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -40,13 +39,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 
 // Sample test class for spring mvc app using Spring Rest Docs to generate API documentation.
 // One important thing to note here is that the client is able to send different objects to the same endpoint (greeting)
@@ -56,59 +54,75 @@ import org.springframework.web.context.WebApplicationContext;
 public class ApplicationTestDocumentation {
 
     @Rule
-    public RestDocumentation restDocumentation =
-            new RestDocumentation("target/generated-snippets");
+    public JUnitRestDocumentation restDocumentation =
+            new JUnitRestDocumentation("target/generated-snippets");
+
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private WebApplicationContext context;
-    private RestDocumentationResultHandler document;
 
     @Before
     public void setUp() {
-        this.document = document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-                .apply(documentationConfiguration(this.restDocumentation).uris()
-                        .withScheme("http")
-                        .withHost("offsidegaming.com")
-                        .withPort(9000))
-                .alwaysDo(this.document)
-
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
 
     //the hello request has a single field that is defined in the abstract class from which HelloRequest extends.
-   /* @Test
+    @Test
     public void getGreeting() throws Exception {
+
+        /*RestDocumentationResultHandler document = documentPrettyPrintReqResp("getGreeting");
+        document.snippets(
+                pathParameters(greetingPathParams())
+        );*/
+
         HelloRequest req = new HelloRequest();
         req.setName("Will");
+
         ObjectMapper objectMapper = new ObjectMapper();
+
         mockMvc.perform(post("/api/greeting").content(objectMapper.writeValueAsString(req))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(containsString("hello Will")))
-                .andDo(this.document.document(
-                        links(
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("An array of <<resources-tag,Tag resources>>")
-                                )));
-    }*/
+                .andDo(document("hello"
+                ));
+    }
 
     //goodbye request has an additional field - 'fullname'. the 'name' field nfrom the abstract class can be
     // sent too however this is not used in the implementation.
-    /*@Test
+    @Test
     public void getGoodbye() throws Exception {
+
+        //RestDocumentationResultHandler document = documentPrettyPrintReqResp("getGoodbye");
+        /*document.snippets(
+                pathParameters(greetingPathParams())
+        );*/
+
         GoodbyeRequest req = new GoodbyeRequest();
         req.setFullname("Will Grigg");
         req.setName("Will");
+
         ObjectMapper objectMapper = new ObjectMapper();
+
         mockMvc.perform(post("/api/greeting").content(objectMapper.writeValueAsString(req))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(containsString("goodbye Will Grigg")))
-                .andDo(this.document.document(
-                        links(
-                        ),
-                        responseFields(
-                                fieldWithPath("message").description("An array of <<resources-tag,Tag resources>>"))));
-    }*/
+                .andDo(document("goodbye"));
+    }
+
+    private RestDocumentationResultHandler documentPrettyPrintReqResp(String useCase) {
+        return document(useCase,
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()));
+    }
+
+    private static ParameterDescriptor[] greetingPathParams() {
+        return new ParameterDescriptor[]{
+                parameterWithName("userId").description("this is the users name")
+        };
+    }
+
 }

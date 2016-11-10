@@ -18,17 +18,13 @@ This request will return a welcome greeting to the user.
 
 === Example request
 
-include::{snippets}/get-greeting/http-request.adoc[]
+include::{snippets}/hello/http-request.adoc[]
 
 === Example response
 
-include::{snippets}/get-greeting/http-response.adoc[]
+include::{snippets}/hello/http-response.adoc[]
 
 [[resources-get-goodbye]]
-
-=== Response Fields
-
-include::{snippets}/get-greeting/response-fields.adoc[]
 
 == Goodbye
 
@@ -36,9 +32,8 @@ This request will return a goodbye message.
 
 === Example request
 
-include::{snippets}/get-goodbye/http-request.adoc[]
+include::{snippets}/goodbye/http-request.adoc[]
 
 === Example response
 
-include::{snippets}/get-goodbye/http-response.adoc[]
-
+include::{snippets}/goodbye/http-response.adoc[]

@@ -34,14 +34,4 @@ public class GreetingController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
-
-
-    @RequestMapping(value =  "/test",  method = RequestMethod.POST)
-    public ResponseEntity<Object> test(@RequestBody AbstractRequest abstractRequest) {
-
-
-        return new ResponseEntity<>("", HttpStatus.OK);
-
-
-    }
 }
